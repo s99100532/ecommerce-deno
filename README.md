@@ -38,3 +38,8 @@ deno task db:migration
 
 - [constants.ts](./constants.ts) for available routes
 - [types/dto.ts](./types/dto.ts) for payload and response
+
+# Production consideration
+
+- use `scripts/gen_jwt_secret.ts`to generate key for production
+- Env should be stored securely (not .env file) and inject on deployment

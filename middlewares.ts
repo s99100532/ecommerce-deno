@@ -16,6 +16,7 @@ export const authMiddleware: Middleware = async (ctx, next) => {
       ctx.state.user_id = parseInt(payload.sub);
       await next();
     } catch (e) {
+      
       ctx.response.status = STATUS_CODE.Unauthorized;
       helper.setAPIResponse(ctx, { success: false, error_message: e.message });
     }

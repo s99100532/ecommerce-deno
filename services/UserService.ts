@@ -46,6 +46,7 @@ export default class UserService {
 
     const payload: JWTPayload = {
       sub: credential.id + "",
+      // Expire after 7 days
       exp: getNumericDate(60 * 60 * 24 * 7),
     };
 
