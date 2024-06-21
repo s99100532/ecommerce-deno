@@ -1,8 +1,9 @@
 {
   "tasks": {
-    "dev": "deno run --watch --allow-read --allow-net main.ts",
-    "start": "deno run --allow-read --allow-net main.ts",
-    "test": "deno test --allow-read --allow-net"
+    "dev": "deno run  --env=.env.local --watch --allow-read --allow-net --allow-env main.ts",
+    "start": "deno run --allow-read --allow-env --allow-net main.ts",
+    "test": "deno test --allow-read --allow-env --allow-net",
+    "db:migration": "deno run --allow-read --allow-env --allow-net db_migration/seed.ts"
   },
   "imports": {
     "@db/sqlite": "jsr:@db/sqlite@^0.11.1",

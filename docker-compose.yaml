@@ -4,8 +4,8 @@ services:
       context: .
       args:
         - PORT=8080
-    environment:
-      - PORT=8080
+    env_file: .env.docker_local
+
   database:
     image: mysql
     restart: always

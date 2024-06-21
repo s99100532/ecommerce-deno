@@ -21,6 +21,7 @@ import {
 } from "./types/dto.ts";
 import { ROUTES } from "./constants.ts";
 
+// Create All the dependencies on root level
 const app = new Application();
 const router = new Router<ContextState>();
 
@@ -34,8 +35,10 @@ const userService = new UserService(userRepository);
 const orderService = new OrderService(
   orderRepository,
   productRepository,
-  userRepository
+  userRepository,
 );
+
+
 
 router.post(ROUTES.SIGNUP, async (context) => {
   await helper.wrapError(context, async () => {
@@ -62,7 +65,7 @@ router.post(ROUTES.LOGIN, async (context) => {
 
     const access_token = await userService.login(
       payload.username,
-      payload.password
+      payload.password,
     );
 
     helper.setAPIResponse<LoginResponseData>(context, {
@@ -107,11 +110,13 @@ if (import.meta.main) {
   const port = parseInt(helper.getEnv("PORT"));
 
   app.addEventListener("listen", () =>
-    console.log(`Server listensing on PORT ${port}`)
+    console.log(`Server listensing on PORT ${port}`),
   );
   await app.listen({ port });
 
   app;
 }
 
-export { router, userService, orderService};
+
+// Export for testing
+export { router, userService, orderService, dbClient };

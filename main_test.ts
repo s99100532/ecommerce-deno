@@ -4,9 +4,7 @@ import { router } from "./main.ts";
 import { returnsNext, stub } from "@std/testing/mock";
 import helper from "./helpers.ts";
 import { assertObjectMatch } from "@std/assert";
-import { userService, orderService } from "./main.ts";
-
-const dbClient = await helper.getDBClient();
+import { userService, orderService, dbClient } from "./main.ts";
 
 const next = testing.createMockNext();
 
@@ -33,6 +31,10 @@ Deno.test("Endpoint Signup", async (t) => {
         username: "test_user",
         password: "12345678",
       }),
+      Promise.resolve({
+        username: "test_user11",
+        password: "1234",
+      }),
     ])
   );
 
@@ -49,7 +51,16 @@ Deno.test("Endpoint Signup", async (t) => {
 
     assertObjectMatch(ctx.response.body as object, {
       success: false,
-      errorMessage: ERROR_MESSAGE.ERROR_USERNAME_EXISTS,
+      error_message: ERROR_MESSAGE.ERROR_USERNAME_EXISTS,
+    });
+  });
+
+  await t.step("short password", async () => {
+    await router.routes()(ctx, next);
+
+    assertObjectMatch(ctx.response.body as object, {
+      success: false,
+      error_message: "String must contain at least 5 character(s)",
     });
   });
 
@@ -101,7 +112,7 @@ Deno.test("Endpoint Login", async (t) => {
 
     assertObjectMatch(ctx.response.body as object, {
       success: false,
-      errorMessage: ERROR_MESSAGE.ERROR_USER_NOT_EXISTS,
+      error_message: ERROR_MESSAGE.ERROR_USER_NOT_EXISTS,
     });
   });
   await t.step("test wrong password", async () => {
@@ -109,7 +120,7 @@ Deno.test("Endpoint Login", async (t) => {
 
     assertObjectMatch(ctx.response.body as object, {
       success: false,
-      errorMessage: ERROR_MESSAGE.ERROR_INVALID_PASSWORD,
+      error_message: ERROR_MESSAGE.ERROR_INVALID_PASSWORD,
     });
   });
 
@@ -198,7 +209,7 @@ Deno.test("Endpoint Create Order", async (t) => {
 
     assertObjectMatch(ctx.response.body as object, {
       success: false,
-      errorMessage: ERROR_MESSAGE.ERROR_MISSING_ORDER_PRODUCT,
+      error_message: ERROR_MESSAGE.ERROR_MISSING_ORDER_PRODUCT,
     });
   });
 
@@ -212,7 +223,7 @@ Deno.test("Endpoint Create Order", async (t) => {
 
     assertObjectMatch(ctx.response.body as object, {
       success: false,
-      errorMessage: ERROR_MESSAGE.ERROR_INSUFFICIENT_BALANCE,
+      error_message: ERROR_MESSAGE.ERROR_INSUFFICIENT_BALANCE,
     });
   });
 

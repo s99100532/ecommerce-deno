@@ -17,10 +17,10 @@ export const authMiddleware: Middleware = async (ctx, next) => {
       await next();
     } catch (e) {
       ctx.response.status = STATUS_CODE.Unauthorized;
-      helper.setAPIResponse(ctx, { success: false, errorMessage: e.message });
+      helper.setAPIResponse(ctx, { success: false, error_message: e.message });
     }
   } else {
     ctx.response.status = STATUS_CODE.Unauthorized;
-    helper.setAPIResponse(ctx, { success: false, errorMessage: "Unauthorized" });
+    helper.setAPIResponse(ctx, { success: false, error_message: "Unauthorized" });
   }
 };

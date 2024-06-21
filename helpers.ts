@@ -1,14 +1,12 @@
-import { load } from "@std/dotenv";
 import { Context } from "@oak/oak";
 import { Client } from "mysql";
-import { APIResponse, JWTPayload } from "./types/request.ts";
+import { JWTPayload } from "./types/request.ts";
 import { ZodError } from "zod";
 import { ERROR_MESSAGE } from "./constants.ts";
 import { Header, create, verify } from "djwt";
 import { OrderError, RepositoryError, UserError } from "./exceptions.ts";
 import { Logger, getLogger } from "@std/log";
-
-const env = await load();
+import { APIResponse } from "./types/dto.ts";
 
 const jwtHeader: Header = { alg: "HS512", typ: "JWT" };
 
@@ -18,16 +16,16 @@ const container: {
 } = {};
 
 const getEnv = (key: string) => {
-  return env[key];
+  return Deno.env.get(key) || "";
 };
 
 const getDBClient = async () => {
   if (!container.dbClient) {
     container.dbClient = await new Client().connect({
-      hostname: env["DB_HOST"],
-      username: env["DB_USERNAME"],
-      db: env["DB_NAME"],
-      password: env["DB_PASSWORD"],
+      hostname: getEnv("DB_HOST"),
+      username: getEnv("DB_USERNAME"),
+      db: getEnv("DB_NAME"),
+      password: getEnv("DB_PASSWORD"),
     });
   }
 
@@ -52,6 +50,12 @@ const setAPIResponse = <T extends object>(
   return context;
 };
 
+/**
+ * Catch the error and turn into Error Response
+ *
+ * @param context
+ * @param f
+ */
 const wrapError = async (context: Context, f: () => unknown) => {
   try {
     await f();
@@ -63,19 +67,17 @@ const wrapError = async (context: Context, f: () => unknown) => {
     ) {
       setAPIResponse(context, {
         success: false,
-        errorMessage: e.message,
+        error_message: e.message,
       });
     } else if (e instanceof ZodError) {
-      console.error(e);
-
       setAPIResponse(context, {
         success: false,
-        errorMessage: e.issues[0].message,
+        error_message: e.issues[0].message,
       });
     } else {
       setAPIResponse(context, {
         success: false,
-        errorMessage: ERROR_MESSAGE.ERROR_UNKNOWN,
+        error_message: ERROR_MESSAGE.ERROR_UNKNOWN,
       });
     }
   }

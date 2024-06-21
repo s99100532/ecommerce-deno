@@ -27,13 +27,18 @@ export type UserDTO = {
 };
 
 /**
+ * 
  * ResponseData and Payload are both data transfer object in this context
  * but Payload indicate object sent FROM client TO server
  * and ResponseData indicate object sent FROM server TO client
  *
- * map(model) => ResponseData -------------- client
- * client                     -------------- process(payload) => ResponseData
  */
+
+export type APIResponse<T> = {
+  success: boolean;
+  data?: T;
+  error_message?: string;
+};
 
 export type CreateOrderResponseData = {
   order_id: number;

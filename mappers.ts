@@ -1,8 +1,12 @@
 import { OrderDTO, OrderListResponseData } from "./types/dto.ts";
-import { Order, OrderItems, Product } from "./types/models.ts";
+import { Order, OrderItem, Product } from "./types/models.ts";
+
+//////////////////////////////////////////////////
+/// Map the model data to Response data (DTO)  ///
+//////////////////////////////////////////////////
 
 function toOrdersWithProducts(
-  orders: (Pick<OrderItems, "order_id"> &
+  orders: (Pick<OrderItem, "order_id"> &
     Product &
     Pick<Order, "user_id" | "status">)[]
 ): OrderListResponseData["orders"] {

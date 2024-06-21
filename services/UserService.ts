@@ -13,7 +13,7 @@ export default class UserService {
   }
 
   async signup(username: string, password: string) {
-    const password_hash = await hash(password);
+    const passwordHash = await hash(password);
 
     const userExists = await this.userRepository.checkUsernameExists(username);
 
@@ -24,7 +24,7 @@ export default class UserService {
     const defaultBalance = parseInt(helper.getEnv("USER_DEFAULT_BALANCE"));
     const user = await this.userRepository.createUser(
       username,
-      password_hash,
+      passwordHash,
       defaultBalance
     );
 
@@ -38,17 +38,19 @@ export default class UserService {
       throw new UserError(ERROR_MESSAGE.ERROR_USER_NOT_EXISTS);
     }
 
-    if (await compare(password, credential.password_hash)) {
-      const payload: JWTPayload = {
-        sub: credential.id + "",
-        exp: getNumericDate(60 * 60 * 24 * 7),
-      };
+    const passwordMatch = await compare(password, credential.password_hash);
 
-      const token = await helper.generateToken(payload);
-
-      return token;
-    } else {
+    if (!passwordMatch) {
       throw new UserError(ERROR_MESSAGE.ERROR_INVALID_PASSWORD);
     }
+
+    const payload: JWTPayload = {
+      sub: credential.id + "",
+      exp: getNumericDate(60 * 60 * 24 * 7),
+    };
+
+    const token = await helper.generateToken(payload);
+
+    return token;
   }
 }

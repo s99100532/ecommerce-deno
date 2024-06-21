@@ -1,13 +1,13 @@
 import { ERROR_MESSAGE } from "../constants.ts";
 import { RepositoryError } from "../exceptions.ts";
-import { Order, OrderItems, OrderStatus, Product } from "../types/models.ts";
+import { Order, OrderItem, OrderStatus, Product } from "../types/models.ts";
 import Repository from "./Repository.ts";
 
 export default class OrderRepository extends Repository {
   async getUserOrders(
     userId: number
   ): Promise<
-    (Pick<OrderItems, "order_id"> &
+    (Pick<OrderItem, "order_id"> &
       Pick<Order, "status" | "user_id"> &
       Product)[]
   > {

@@ -8,7 +8,7 @@ export type Order = {
   status: OrderStatus;
 };
 
-export type OrderItems = {
+export type OrderItem = {
   order_id: number;
   product_id: string;
 };
