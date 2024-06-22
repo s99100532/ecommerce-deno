@@ -9,26 +9,25 @@
 
 # Getting Started
 
-1. Start the services.
+1. Start the database and app. The db container will create table automatically.
 
 ```sh
 docker compose up -d
 ```
 
-2. Run the migration [here](./db_migration/init.sql)
-3. Enter the app container
+2. Enter the app container
 
 ```sh
 docker compose exec app bash
 ```
 
-4. Run the migration for seed data
+3. Run the migration for seed data
 
 ```sh
 deno task db:migration
 ```
 
-5. Start calling the API
+4. Start calling the API
 
 # Testing
 

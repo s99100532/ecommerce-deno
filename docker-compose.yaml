@@ -17,6 +17,7 @@ services:
     ports:
       - 3306:3306
     volumes:
+      # Create tables
       - ./db_migration:/docker-entrypoint-initdb.d
     command:
       [

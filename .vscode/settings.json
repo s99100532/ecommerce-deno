@@ -1,6 +1,5 @@
 {
   "deno.enable": true,
-  "prettier.enable": false,
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   }
