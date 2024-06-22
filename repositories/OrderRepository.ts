@@ -5,18 +5,20 @@ import Repository from "./Repository.ts";
 
 export default class OrderRepository extends Repository {
   async getUserOrders(
-    userId: number
+    userId: number,
   ): Promise<
-    (Pick<OrderItem, "order_id"> &
-      Pick<Order, "status" | "user_id"> &
-      Product)[]
+    (
+      & Pick<OrderItem, "order_id">
+      & Pick<Order, "status" | "user_id">
+      & Product
+    )[]
   > {
     try {
       const orders = await this.dbClient.query(
         `
       select oi.order_id, p.*, o.status, o.user_id from order_item as oi inner join products as p on p.id = oi.product_id inner join orders as o on o.id = oi.order_id where o.user_id = ?
       `,
-        [userId]
+        [userId],
       );
 
       return orders;
@@ -32,9 +34,9 @@ export default class OrderRepository extends Repository {
     amount: number,
   ): Promise<Order> {
     try {
-      
       const result = await this.dbClient.transaction<Order>(async (conn) => {
-        const createOrderStmt = `INSERT INTO orders (user_id, status) values (?, ?)`;
+        const createOrderStmt =
+          `INSERT INTO orders (user_id, status) values (?, ?)`;
         const orderStatus = OrderStatus.CREATED;
         const orderCreateResult = await conn.execute(createOrderStmt, [
           userId,
@@ -48,24 +50,27 @@ export default class OrderRepository extends Repository {
           orderCreateResult.affectedRows > 0 &&
           orderId
         ) {
-          const createItemsStmt = `INSERT INTO order_item (order_id, product_id) values
+          const createItemsStmt =
+            `INSERT INTO order_item (order_id, product_id) values
           ${orderProducts.map(() => "(?, ?)").join(",")}`;
           await conn.execute(
             createItemsStmt,
             orderProducts
               .map((pd) => [orderCreateResult.lastInsertId, pd.id])
-              .flat()
+              .flat(),
           );
 
-          const updateQuantityStmt = `UPDATE products SET quantity = quantity - 1 where id in 
+          const updateQuantityStmt =
+            `UPDATE products SET quantity = quantity - 1 where id in 
           (${orderProducts.map((_) => "?").join(",")})`;
 
           await conn.execute(
             updateQuantityStmt,
-            orderProducts.map((p) => p.id)
+            orderProducts.map((p) => p.id),
           );
 
-          const updateBalanceStmt = `UPDATE users SET balance = balance - ? where id = (?) `;
+          const updateBalanceStmt =
+            `UPDATE users SET balance = balance - ? where id = (?) `;
 
           await conn.execute(updateBalanceStmt, [amount, userId]);
 

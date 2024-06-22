@@ -6,9 +6,11 @@ import { Order, OrderItem, Product } from "./types/models.ts";
 //////////////////////////////////////////////////
 
 function toOrdersWithProducts(
-  orders: (Pick<OrderItem, "order_id"> &
-    Product &
-    Pick<Order, "user_id" | "status">)[]
+  orders: (
+    & Pick<OrderItem, "order_id">
+    & Product
+    & Pick<Order, "user_id" | "status">
+  )[],
 ): OrderListResponseData["orders"] {
   const orderWithProducts: {
     [orderId: number]: OrderDTO;

@@ -5,7 +5,7 @@ import helper from "../helpers.ts";
 
 const run_seed = async (client: Client) => {
   const seed_csv = await Deno.readTextFile(
-    `${import.meta.dirname}/product_items.csv`
+    `${import.meta.dirname}/product_items.csv`,
   );
   const seed = parse(seed_csv, {
     skipFirstRow: true,
@@ -22,7 +22,7 @@ const run_seed = async (client: Client) => {
         `${item.quantity}`,
         `"${item.category}"`,
       ].join(",") +
-      ")"
+      ")",
   );
 
   const stmts = `INSERT INTO 

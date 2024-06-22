@@ -7,12 +7,12 @@ type UserCredentialKey = "password_hash";
 
 export default class UserRepository extends Repository {
   async getUserCredential(
-    username: string
+    username: string,
   ): Promise<Pick<User, UserCredentialKey | "id"> | null> {
     try {
       const result = await this.dbClient.query(
         "select id, password_hash from users where username = ?",
-        [username]
+        [username],
       );
 
       return result[0];
@@ -22,12 +22,12 @@ export default class UserRepository extends Repository {
     }
   }
   async getUserInfo(
-    user_id: number
+    user_id: number,
   ): Promise<Pick<User, "id" | "username" | "balance"> | null> {
     try {
       const result = await this.dbClient.query(
         "select id, username, balance from users where id = ?",
-        [user_id]
+        [user_id],
       );
 
       return result[0];
@@ -41,7 +41,7 @@ export default class UserRepository extends Repository {
     try {
       const result = await this.dbClient.query(
         "select count(*) as user_count from users where username = ?",
-        [username]
+        [username],
       );
 
       return result[0].user_count > 0;
@@ -52,14 +52,14 @@ export default class UserRepository extends Repository {
   async createUser(
     username: string,
     password_hash: string,
-    balance: number
+    balance: number,
   ): Promise<Omit<User, UserCredentialKey>> {
     try {
       const result = await this.dbClient.execute(
         `INSERT INTO users (username, password_hash, balance) VALUES
     (?, ?, ?)
     `,
-        [username, password_hash, balance]
+        [username, password_hash, balance],
       );
 
       if (result.affectedRows == 1 && result.lastInsertId) {

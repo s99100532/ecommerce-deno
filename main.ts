@@ -1,25 +1,27 @@
 import { Application, Router } from "@oak/oak";
-import UserService from "./services/UserService.ts";
-import UserRepository from "./repositories/UserRepository.ts";
-import {
-  CreateOrderValidator,
-  LoginValidator,
-  SignupValidator,
-} from "./validators.ts";
+import { ROUTES } from "./constants.ts";
 import helper from "./helpers.ts";
-import OrderService from "./services/OrderService.ts";
-import ProductRepository from "./repositories/ProductRepository.ts";
-import OrderRepository from "./repositories/OrderRepository.ts";
-import { authMiddleware } from "./middlewares.ts";
-import { ContextState } from "./types/request.ts";
 import { toOrdersWithProducts } from "./mappers.ts";
+import { authMiddleware } from "./middlewares.ts";
+import {
+  OrderRepository,
+  ProductRepository,
+  UserRepository,
+} from "./repositories/mod.ts";
+
+import { OrderService, UserService } from "./services/mod.ts";
 import {
   CreateOrderResponseData,
   LoginResponseData,
   OrderListResponseData,
   SignupResponseData,
 } from "./types/dto.ts";
-import { ROUTES } from "./constants.ts";
+import { ContextState } from "./types/request.ts";
+import {
+  CreateOrderValidator,
+  LoginValidator,
+  SignupValidator,
+} from "./validators.ts";
 
 // Create All the dependencies on root level
 const app = new Application();
@@ -38,8 +40,6 @@ const orderService = new OrderService(
   userRepository,
 );
 
-
-
 router.post(ROUTES.SIGNUP, async (context) => {
   await helper.wrapError(context, async () => {
     const { getEnv } = helper;
@@ -48,9 +48,9 @@ router.post(ROUTES.SIGNUP, async (context) => {
     const payload = SignupValidator.parse(body);
 
     await userService.signup(payload.username, payload.password);
-    const redirect_url = `${getEnv("APP_URL")}:${getEnv("PORT")}${
-      ROUTES.LOGIN
-    }`;
+    const redirect_url = `${getEnv("APP_URL")}:${
+      getEnv("PORT")
+    }${ROUTES.LOGIN}`;
 
     helper.setAPIResponse<SignupResponseData>(context, {
       success: true,
@@ -109,14 +109,14 @@ app.use(router.allowedMethods());
 if (import.meta.main) {
   const port = parseInt(helper.getEnv("PORT"));
 
-  app.addEventListener("listen", () =>
-    console.log(`Server listensing on PORT ${port}`),
+  app.addEventListener(
+    "listen",
+    () => console.log(`Server listensing on PORT ${port}`),
   );
   await app.listen({ port });
 
   app;
 }
 
-
 // Export for testing
-export { router, userService, orderService, dbClient };
+export { dbClient, orderService, router, userService };

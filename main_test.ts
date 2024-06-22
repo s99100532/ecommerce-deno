@@ -3,8 +3,8 @@ import { ERROR_MESSAGE, ROUTES } from "./constants.ts";
 import { router } from "./main.ts";
 import { returnsNext, stub } from "@std/testing/mock";
 import helper from "./helpers.ts";
-import { assertObjectMatch } from "@std/assert";
-import { userService, orderService, dbClient } from "./main.ts";
+import { assertEquals, assertObjectMatch } from "@std/assert";
+import { dbClient, orderService, userService } from "./main.ts";
 
 const next = testing.createMockNext();
 
@@ -35,7 +35,7 @@ Deno.test("Endpoint Signup", async (t) => {
         username: "test_user11",
         password: "1234",
       }),
-    ])
+    ]),
   );
 
   await t.step("normal signup", async () => {
@@ -87,12 +87,12 @@ Deno.test("Endpoint Login", async (t) => {
       Promise.resolve(testUser),
       Promise.resolve({ username: "sdasda", password: "fgfdgdf" }),
       Promise.resolve({ username: testUser.username, password: "fgfdgdf" }),
-    ])
+    ]),
   );
   const mockToken = stub(
     helper,
     "generateToken",
-    returnsNext([Promise.resolve(testToken)])
+    returnsNext([Promise.resolve(testToken)]),
   );
 
   await t.step("test normal login", async () => {
@@ -146,7 +146,7 @@ Deno.test("Endpoint Create Order", async (t) => {
 
   const testUserInfo = await userService.signup(
     testUser.username,
-    testUser.password
+    testUser.password,
   );
   const token = await userService.login(testUser.username, testUser.password);
 
@@ -162,9 +162,9 @@ Deno.test("Endpoint Create Order", async (t) => {
         `INSERT INTO products (id, product_name, price, quantity, category) values 
     (?, ?, ?, ?, ?)
     `,
-        [item.id, item.product_name, item.price, item.quantity, item.category]
+        [item.id, item.product_name, item.price, item.quantity, item.category],
       );
-    })
+    }),
   );
 
   const mockRequestBody = stub(
@@ -186,7 +186,7 @@ Deno.test("Endpoint Create Order", async (t) => {
           product_id: i.id,
         })),
       }),
-    ])
+    ]),
   );
 
   await t.step("test create order", async () => {
@@ -194,7 +194,7 @@ Deno.test("Endpoint Create Order", async (t) => {
 
     const orders = await dbClient.query(
       "select id from orders where user_id = ?",
-      [testUserInfo.id]
+      [testUserInfo.id],
     );
 
     assertObjectMatch(ctx.response.body as object, {
@@ -203,6 +203,19 @@ Deno.test("Endpoint Create Order", async (t) => {
         order_id: orders[0].id,
       },
     });
+
+    const users = await dbClient.query("select * from users where id = ?", [
+      testUserInfo.id,
+    ]);
+
+    assertEquals(users[0].balance, 90);
+
+    const orderItems = await dbClient.query(
+      "select * from products where id = ?",
+      [testItems[0].id],
+    );
+
+    assertEquals(orderItems[0].quantity, 0);
   });
   await t.step("test create order with no quantity", async () => {
     await router.routes()(ctx, next);
@@ -252,14 +265,14 @@ Deno.test("Endpoint My Order", async (t) => {
         `INSERT INTO products (id, product_name, price, quantity, category) values 
     (?, ?, ?, ?, ?)
     `,
-        [item.id, item.product_name, item.price, item.quantity, item.category]
+        [item.id, item.product_name, item.price, item.quantity, item.category],
       );
-    })
+    }),
   );
 
   const testUserInfo = await userService.signup(
     testUser.username,
-    testUser.password
+    testUser.password,
   );
 
   const token = await userService.login(testUser.username, testUser.password);
@@ -272,7 +285,7 @@ Deno.test("Endpoint My Order", async (t) => {
 
   const order = await orderService.createOrder(
     testUserInfo.id,
-    testItems.map((p) => ({ product_id: p.id }))
+    testItems.map((p) => ({ product_id: p.id })),
   );
 
   await t.step("test my order", async () => {

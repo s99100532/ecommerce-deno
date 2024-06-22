@@ -1,8 +1,10 @@
-import OrderRepository from "../repositories/OrderRepository.ts";
-import ProductRepository from "../repositories/ProductRepository.ts";
-import UserRepository from "../repositories/UserRepository.ts";
 import { ERROR_MESSAGE } from "../constants.ts";
 import { OrderError, UserError } from "../exceptions.ts";
+import {
+  OrderRepository,
+  ProductRepository,
+  UserRepository,
+} from "../repositories/mod.ts";
 
 export default class OrderService {
   orderRepository: OrderRepository;
@@ -11,7 +13,7 @@ export default class OrderService {
   constructor(
     orderRepository: OrderRepository,
     productRespository: ProductRepository,
-    userRespository: UserRepository
+    userRespository: UserRepository,
   ) {
     this.orderRepository = orderRepository;
     this.productRepository = productRespository;
@@ -20,8 +22,8 @@ export default class OrderService {
 
   async createOrder(userId: number, orderProducts: { product_id: string }[]) {
     const products = await this.productRepository.getAvalibleProductByIds(
-      orderProducts.map((p) => p.product_id)
-    );    
+      orderProducts.map((p) => p.product_id),
+    );
 
     if (products.length != orderProducts.length) {
       throw new OrderError(ERROR_MESSAGE.ERROR_MISSING_ORDER_PRODUCT);
@@ -46,7 +48,7 @@ export default class OrderService {
     const order = await this.orderRepository.createOrder(
       userId,
       products,
-      amount
+      amount,
     );
 
     return order;

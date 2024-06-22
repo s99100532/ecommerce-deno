@@ -3,9 +3,9 @@ import { Client } from "mysql";
 import { JWTPayload } from "./types/request.ts";
 import { ZodError } from "zod";
 import { ERROR_MESSAGE } from "./constants.ts";
-import { Header, create, verify } from "djwt";
+import { create, Header, verify } from "djwt";
 import { OrderError, RepositoryError, UserError } from "./exceptions.ts";
-import { Logger, getLogger } from "@std/log";
+import { getLogger, Logger } from "@std/log";
 import { APIResponse } from "./types/dto.ts";
 
 const jwtHeader: Header = { alg: "HS512", typ: "JWT" };
@@ -42,7 +42,7 @@ const getAppLogger = () => {
 
 const setAPIResponse = <T extends object>(
   context: Context,
-  response: APIResponse<T>
+  response: APIResponse<T>,
 ) => {
   context.response.type = "application/json";
   context.response.body = response;
@@ -88,7 +88,7 @@ const JWTKey = await crypto.subtle.importKey(
   JSON.parse(getEnv("JWT_SECRET")),
   { name: "HMAC", hash: "SHA-512" },
   true,
-  ["sign", "verify"]
+  ["sign", "verify"],
 );
 
 const getJWTPayload = async (token: string) => {

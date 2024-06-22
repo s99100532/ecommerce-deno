@@ -27,11 +27,9 @@ export type UserDTO = {
 };
 
 /**
- * 
  * ResponseData and Payload are both data transfer object in this context
  * but Payload indicate object sent FROM client TO server
  * and ResponseData indicate object sent FROM server TO client
- *
  */
 
 export type APIResponse<T> = {

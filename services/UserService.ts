@@ -1,10 +1,10 @@
-import UserRepository from "../repositories/UserRepository.ts";
-import { hash, compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { getNumericDate } from "djwt";
-import helper from "../helpers.ts";
 import { ERROR_MESSAGE } from "../constants.ts";
-import { JWTPayload } from "../types/request.ts";
 import { UserError } from "../exceptions.ts";
+import helper from "../helpers.ts";
+import { JWTPayload } from "../types/request.ts";
+import { UserRepository } from "../repositories/mod.ts";
 
 export default class UserService {
   userRepository: UserRepository;
@@ -25,7 +25,7 @@ export default class UserService {
     const user = await this.userRepository.createUser(
       username,
       passwordHash,
-      defaultBalance
+      defaultBalance,
     );
 
     return user;

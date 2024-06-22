@@ -1,3 +1,8 @@
+# Teck Stack
+
+- Deno
+- MySQL
+
 # Prerequisite
 
 - Install docker latest version (>= 24)
@@ -32,7 +37,8 @@ deno task db:migration
 
 # Remark
 
-- if deno is installed with a existing database instead of using docker, the project can start with `deno task dev` after database setup.
+- if deno is installed with a existing database instead of using docker, the
+  project can start with `deno task dev` after database setup.
 
 # API Structure
 

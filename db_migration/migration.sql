@@ -5,14 +5,14 @@ USE shopping;
 CREATE TABLE IF NOT EXISTS orders (
   id int NOT NULL AUTO_INCREMENT,
   user_id int NOT NULL,
-  status varchar(20) NOT NULL,
+  status char(10) NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS order_item (
   order_id int NOT NULL,
   product_id char(20) NOT NULL,
-  unique (order_id, product_id),
+  UNIQUE (order_id, product_id),
   INDEX (order_id)
 );
 
@@ -31,5 +31,5 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash char(100) NOT NULL,
   balance float NOT NULL,
   PRIMARY KEY (id),
-  unique (username)
+  UNIQUE (username)
 );
