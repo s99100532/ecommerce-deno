@@ -13,6 +13,5 @@ export const ROUTES = {
   LOGIN: "/login",
   SIGNUP: "/signup",
   ORDER_CREATE: "/orders",
-  ITEM_LIST: "/items",
   MY_ORDERS: "/orders/me",
 };
