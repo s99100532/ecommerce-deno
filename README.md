@@ -15,7 +15,7 @@
 docker compose up -d
 ```
 
-2. Run the migration [here](./db_migration/migration.sql)
+2. Run the migration [here](./db_migration/init.sql)
 3. Enter the app container
 
 ```sh
