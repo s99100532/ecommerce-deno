@@ -45,43 +45,40 @@ export default class OrderRepository extends Repository {
 
         const orderId = orderCreateResult.lastInsertId;
 
-        if (
-          orderCreateResult.affectedRows &&
-          orderCreateResult.affectedRows > 0 &&
-          orderId
-        ) {
-          const createItemsStmt =
-            `INSERT INTO order_item (order_id, product_id) values
-          ${orderProducts.map(() => "(?, ?)").join(",")}`;
-          await conn.execute(
-            createItemsStmt,
-            orderProducts
-              .map((pd) => [orderCreateResult.lastInsertId, pd.id])
-              .flat(),
-          );
-
-          const updateQuantityStmt =
-            `UPDATE products SET quantity = quantity - 1 where id in 
-          (${orderProducts.map((_) => "?").join(",")})`;
-
-          await conn.execute(
-            updateQuantityStmt,
-            orderProducts.map((p) => p.id),
-          );
-
-          const updateBalanceStmt =
-            `UPDATE users SET balance = balance - ? where id = (?) `;
-
-          await conn.execute(updateBalanceStmt, [amount, userId]);
-
-          return {
-            id: orderId,
-            status: orderStatus,
-            user_id: userId,
-          };
+        if (!orderId) {
+          throw new Error("order create fail");
         }
 
-        throw new Error("");
+        const createItemsStmt =
+          `INSERT INTO order_item (order_id, product_id) values
+          ${orderProducts.map(() => "(?, ?)").join(",")}`;
+
+        await conn.execute(
+          createItemsStmt,
+          orderProducts
+            .map((pd) => [orderId, pd.id])
+            .flat(),
+        );
+
+        const updateQuantityStmt =
+          `UPDATE products SET quantity = quantity - 1 where id in 
+          (${orderProducts.map((_) => "?").join(",")})`;
+
+        await conn.execute(
+          updateQuantityStmt,
+          orderProducts.map((p) => p.id),
+        );
+
+        const updateBalanceStmt =
+          `UPDATE users SET balance = balance - ? where id = (?) `;
+
+        await conn.execute(updateBalanceStmt, [amount, userId]);
+
+        return {
+          id: orderId,
+          status: orderStatus,
+          user_id: userId,
+        };
       });
 
       return result;
