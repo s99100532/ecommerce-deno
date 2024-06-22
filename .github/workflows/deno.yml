@@ -24,7 +24,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      mysql:
+      database:
         image: mysql
         env:
           # The MySQL docker container requires these environment variables to be set
@@ -62,4 +62,4 @@ jobs:
       - name: Run tests
         run: deno task test --env=.env.ci
         env:
-          DB_HOST: 127.0.0.1
+          DB_HOST: database
