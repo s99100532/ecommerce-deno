@@ -16,6 +16,8 @@ services:
       - MYSQL_PASSWORD=moovup
     ports:
       - 3306:3306
+    volumes:
+      - ./db_migration:/docker-entrypoint-initdb.d
     command:
       [
         "mysqld",

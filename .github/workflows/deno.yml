@@ -34,6 +34,8 @@ jobs:
           MYSQL_ROOT_PASSWORD: example
           MYSQL_USER: moovup
           MYSQL_PASSWORD: moovup
+        volumes:
+          - ./db_migration:/docker-entrypoint-initdb.d
         ports:
           # Opens port 3306 on service container and host
           # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
