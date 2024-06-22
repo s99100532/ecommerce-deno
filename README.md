@@ -34,6 +34,9 @@ deno task db:migration
 1. Enter app container as above
 2. Run `deno task test`
 
+> [!WARNING]  
+> Run test will TRUNCATE all the tables, make sure to use dev database.
+
 # Remark
 
 - if deno is installed with a existing database instead of using docker, the
