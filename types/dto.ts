@@ -1,7 +1,9 @@
 import { z } from "zod";
-import { LoginValidator } from "../validators.ts";
-import { SignupValidator } from "../validators.ts";
-import { CreateOrderValidator } from "../validators.ts";
+import {
+  CreateOrderValidator,
+  LoginValidator,
+  SignupValidator,
+} from "../validators.ts";
 
 export type OrderDTO = {
   id: number;
