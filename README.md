@@ -9,7 +9,8 @@
 
 # Getting Started
 
-1. Start the database and app. The db container will create table automatically according to [here](./db_migration/init.sql).
+1. Start the database and app. The db container will create table automatically
+   according to [here](./db_migration/init.sql).
 
 ```sh
 docker compose up -d
@@ -34,7 +35,7 @@ deno task db:migration
 1. Enter app container as above
 2. Run `deno task test`
 
-> [!WARNING]
+> [!WARNING]  
 > Run test will TRUNCATE all the tables, make sure to use dev database.
 
 # Remark
@@ -46,6 +47,7 @@ deno task db:migration
 
 - [constants.ts](./constants.ts) for available routes
 - [types/dto.ts](./types/dto.ts) for payload and response
+- [main.ts](./main.ts) for more details
 
 # Production consideration
 
