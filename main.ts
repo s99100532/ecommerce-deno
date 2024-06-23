@@ -48,9 +48,9 @@ router.post(ROUTES.SIGNUP, async (context) => {
     const payload = SignupValidator.parse(body);
 
     await userService.signup(payload.username, payload.password);
-    const redirect_url = `${getEnv("APP_URL")}:${
-      getEnv("PORT")
-    }${ROUTES.LOGIN}`;
+    const redirect_url = `${getEnv("APP_URL")}:${getEnv(
+      "PORT",
+    )}${ROUTES.LOGIN}`;
 
     helper.setAPIResponse<SignupResponseData>(context, {
       success: true,
@@ -103,15 +103,20 @@ router.get(ROUTES.MY_ORDERS, authMiddleware, async (context) => {
   });
 });
 
+router.get(ROUTES.HEALTH, (context) => {
+  helper.setAPIResponse(context, {
+    success: true,
+  });
+});
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 
 if (import.meta.main) {
   const port = parseInt(helper.getEnv("PORT"));
 
-  app.addEventListener(
-    "listen",
-    () => console.log(`Server listensing on PORT ${port}`),
+  app.addEventListener("listen", () =>
+    console.log(`Server listensing on PORT ${port}`),
   );
   await app.listen({ port });
 

@@ -9,7 +9,7 @@
 
 # Getting Started
 
-1. Start the database and app. The db container will create table automatically.
+1. Start the database and app. The db container will create table automatically according to [here](./db_migration/init.sql).
 
 ```sh
 docker compose up -d
@@ -27,14 +27,14 @@ docker compose exec app bash
 deno task db:migration
 ```
 
-4. Start calling the API
+4. test the API using endpoint http://localhost:8080/health
 
 # Testing
 
 1. Enter app container as above
 2. Run `deno task test`
 
-> [!WARNING]  
+> [!WARNING]
 > Run test will TRUNCATE all the tables, make sure to use dev database.
 
 # Remark

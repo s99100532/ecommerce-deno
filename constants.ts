@@ -14,4 +14,5 @@ export const ROUTES = {
   SIGNUP: "/signup",
   ORDER_CREATE: "/orders",
   MY_ORDERS: "/orders/me",
+  HEALTH: "/health",
 };
