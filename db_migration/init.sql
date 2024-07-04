@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS order_item (
 CREATE TABLE IF NOT EXISTS products (
   id char(20) NOT NULL,
   quantity int NOT NULL,
+  version int NOT NULL DEFAULT 1,
   product_name varchar(100) NOT NULL,
   category varchar(100) NOT NULL,
   price float NOT NULL ,

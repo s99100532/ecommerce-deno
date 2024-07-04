@@ -97,11 +97,11 @@ const getJWTPayload = async (token: string) => {
   return payload;
 };
 
-const generateToken = async (payload: JWTPayload) => {
+export async function generateToken(payload: JWTPayload) {
   const token = await create(jwtHeader, payload, JWTKey);
 
   return token;
-};
+}
 
 const getRequestBody = (context: Context) => {
   return context.request.body.json();

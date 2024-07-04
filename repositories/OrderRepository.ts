@@ -7,11 +7,9 @@ export default class OrderRepository extends Repository {
   async getUserOrders(
     userId: number,
   ): Promise<
-    (
-      & Pick<OrderItem, "order_id">
-      & Pick<Order, "status" | "user_id">
-      & Product
-    )[]
+    (Pick<OrderItem, "order_id"> &
+      Pick<Order, "status" | "user_id"> &
+      Product)[]
   > {
     try {
       const orders = await this.dbClient.query(
@@ -30,13 +28,12 @@ export default class OrderRepository extends Repository {
   }
   async createOrder(
     userId: number,
-    orderProducts: { id: string; price: number }[],
+    orderProducts: { id: string; price: number; version: number }[],
     amount: number,
   ): Promise<Order> {
     try {
       const result = await this.dbClient.transaction<Order>(async (conn) => {
-        const createOrderStmt =
-          `INSERT INTO orders (user_id, status) values (?, ?)`;
+        const createOrderStmt = `INSERT INTO orders (user_id, status) values (?, ?)`;
         const orderStatus = OrderStatus.CREATED;
 
         const orderCreateResult = await conn.execute(createOrderStmt, [
@@ -50,36 +47,31 @@ export default class OrderRepository extends Repository {
           throw new Error("order create fail");
         }
 
-        const createItemsStmt =
-          `INSERT INTO order_item (order_id, product_id) values
+        const createItemsStmt = `INSERT INTO order_item (order_id, product_id) values
           ${orderProducts.map(() => "(?, ?)").join(",")}`;
 
         const createItemResult = await conn.execute(
           createItemsStmt,
-          orderProducts
-            .map((pd) => [orderId, pd.id])
-            .flat(),
+          orderProducts.map((pd) => [orderId, pd.id]).flat(),
         );
 
         if (!createItemResult.affectedRows) {
           throw new Error("items create fail");
         }
 
-        const updateQuantityStmt =
-          `UPDATE products SET quantity = quantity - 1 where id in 
-          (${orderProducts.map((_) => "?").join(",")})`;
+        const updateQuantityStmt = `UPDATE products SET quantity = quantity - 1, version = version + 1 where (id, version) in
+          (${orderProducts.map((_) => "(?, ?)").join(",")})`;
 
         const updateQuantityResult = await conn.execute(
           updateQuantityStmt,
-          orderProducts.map((p) => p.id),
+          orderProducts.map((p) => [p.id, p.version]).flat(),
         );
 
         if (updateQuantityResult.affectedRows != orderProducts.length) {
           throw new Error("quantity update fail");
         }
 
-        const updateBalanceStmt =
-          `UPDATE users SET balance = balance - ? where id = (?) `;
+        const updateBalanceStmt = `UPDATE users SET balance = balance - ? where id = (?) `;
 
         const updateBalanceResult = await conn.execute(updateBalanceStmt, [
           amount,

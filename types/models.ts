@@ -16,6 +16,7 @@ export type OrderItem = {
 export type Product = {
   id: string;
   quantity: number;
+  version: number;
   price: number;
   product_name: string;
   category: string;

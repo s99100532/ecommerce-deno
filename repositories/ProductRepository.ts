@@ -6,14 +6,12 @@ import Repository from "./Repository.ts";
 export default class ProductRepository extends Repository {
   async getAvalibleProductByIds(
     ids: string[],
-  ): Promise<Pick<Product, "id" | "price" | "quantity">[]> {
+  ): Promise<Pick<Product, "id" | "price" | "quantity" | "version">[]> {
     try {
       const result = await this.dbClient.query(
-        `select id, quantity, price from products where id in (${
-          ids
-            .map(() => "?")
-            .join(",")
-        }) and quantity > 0`,
+        `select id, quantity, price, version from products where id in (${ids
+          .map(() => "?")
+          .join(",")}) and quantity > 0`,
         [ids],
       );
       return result;
