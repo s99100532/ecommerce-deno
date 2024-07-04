@@ -3,7 +3,7 @@ import { ERROR_MESSAGE, ROUTES } from "./constants.ts";
 import { router } from "./main.ts";
 import { returnsNext, stub } from "@std/testing/mock";
 import helper from "./helpers.ts";
-import { assertEquals, assertObjectMatch, assertThrows } from "@std/assert";
+import { assertEquals, assertObjectMatch } from "@std/assert";
 import { dbClient, orderService, userService } from "./main.ts";
 
 const next = testing.createMockNext();
